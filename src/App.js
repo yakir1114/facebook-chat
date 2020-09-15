@@ -4,25 +4,32 @@ import { FormControl , Input , InputLabel} from '@material-ui/core';
 
 import './App.css';
 import Message from './Message';
+import db from './firebase';
 
 function App() {
 const[input,setInput] = useState('');
-const[messages, setMessages] = useState([{username: 'yakir',text:'asdasd'},{username: 'yak',text: 'Hello World!'}]);
+const[messages, setMessages] = useState([]);
 const[username,setUsername] = useState('');
+
+//read messages from db
+//onSnapshot : every time the db changing run this code.
+useEffect(() => {
+db.collection('messages').onSnapshot(snapshot =>{
+  setMessages(snapshot.docs.map(doc => doc.data()))
+})
+},[]) //[] Means: that the useEffect running only when the page loads.
 
 useEffect(()=>{
   setUsername (prompt('Please enter your name'));
 }, [])
 
-console.log(username);
 const sendMessage = (event) => {
   //all the logic to show message
   event.preventDefault();
-  setMessages([...messages,{username: username , text: input}]);
+  setMessages([...messages,{username: username , message: input}]);
   setInput('');
-}
-
-  return (
+};
+  return(
     <div className="App">
       <h1>Hello Everyone!</h1>
       <h2>welcome {username}</h2>
