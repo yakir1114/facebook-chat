@@ -6,6 +6,7 @@ import './App.css';
 import Message from './Message';
 import db from './firebase';
 import firebase from 'firebase';
+import FlipMove from 'react-flip-move';
 
 function App() {
 const[input,setInput] = useState('');
@@ -17,7 +18,7 @@ const[username,setUsername] = useState('');
 useEffect(() => {
 db.collection('messages').orderBy('timestamp' , 'desc')
 .onSnapshot(snapshot =>{
-  setMessages(snapshot.docs.map(doc => doc.data()))
+  setMessages(snapshot.docs.map(doc => ({id: doc.id , message: doc.data()})))
 })
 },[]) //[] Means: that the useEffect running only when the page loads.
 
@@ -54,12 +55,14 @@ const sendMessage = (event) => {
         </FormControl>
       </form>
       
-      {/* the messages area*/ }
-      {
-        messages.map(message => (
-          <Message username ={username} message={message}></Message>
-        ))
-      }
+      <FlipMove>
+          {/* the messages area*/ }
+        {
+          messages.map(({id , message}) => (
+            <Message key={id} username ={username} message={message}></Message>
+          ))
+        }
+      </FlipMove>
     </div>
   );
 }
