@@ -5,6 +5,7 @@ import { FormControl , Input , InputLabel} from '@material-ui/core';
 import './App.css';
 import Message from './Message';
 import db from './firebase';
+import firebase from 'firebase';
 
 function App() {
 const[input,setInput] = useState('');
@@ -14,7 +15,8 @@ const[username,setUsername] = useState('');
 //read messages from db
 //onSnapshot : every time the db changing run this code.
 useEffect(() => {
-db.collection('messages').onSnapshot(snapshot =>{
+db.collection('messages').orderBy('timestamp' , 'desc')
+.onSnapshot(snapshot =>{
   setMessages(snapshot.docs.map(doc => doc.data()))
 })
 },[]) //[] Means: that the useEffect running only when the page loads.
@@ -26,6 +28,12 @@ useEffect(()=>{
 const sendMessage = (event) => {
   //all the logic to show message
   event.preventDefault();
+
+  db.collection('messages').add({
+    message: input,
+    username : username,
+    timestamp:  firebase.firestore.FieldValue.serverTimestamp()
+  })
   setMessages([...messages,{username: username , message: input}]);
   setInput('');
 };
