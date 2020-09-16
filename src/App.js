@@ -7,6 +7,8 @@ import Message from './Message';
 import db from './firebase';
 import firebase from 'firebase';
 import FlipMove from 'react-flip-move';
+import SendIcon from '@material-ui/icons/Send';
+import { IconButton } from '@material-ui/core';
 
 function App() {
 const[input,setInput] = useState('');
@@ -40,18 +42,20 @@ const sendMessage = (event) => {
 };
   return(
     <div className="App">
-      <h1>Hello Everyone!</h1>
+      
+      <h1>Hello Everyone! </h1>
+      <img height="100" width='100' src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTghc5snLWCRWoUS3cZTJe2Gi3itK9u0bOiAQ&usqp=CAU" ></img>
       <h2>welcome {username}</h2>
-      <form>
 
-        {/* the input filed*/ }
+      <form className="app__form">
+        <FormControl className="app__formControl">
+          
+          <Input placeholder="Enter Message..." className="app__input" value={input} onChange={event=> setInput(event.target.value)} />
+          <IconButton className="app__iconButtom" disabled={!input} variant="contained" color="primary" type='submit' onClick = {sendMessage}>
+            <SendIcon>
 
-        {/* the send button*/ }
-        
-        <FormControl>
-          <InputLabel >Enter Message...</InputLabel>
-          <Input value={input} onChange={event=> setInput(event.target.value)} />
-          <Button disabled={!input} variant="contained" color="primary" type='submit' onClick = {sendMessage}>Send Message</Button>
+            </SendIcon>
+          </IconButton>
         </FormControl>
       </form>
       
