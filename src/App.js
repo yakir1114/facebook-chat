@@ -5,6 +5,10 @@ import { FormControl , Input , InputLabel} from '@material-ui/core';
 import './App.css';
 import Message from './Message';
 import db from './firebase';
+import firebase from 'firebase';
+import FlipMove from 'react-flip-move';
+import SendIcon from '@material-ui/icons/Send';
+import { IconButton } from '@material-ui/core';
 
 function App() {
 const[input,setInput] = useState('');
@@ -14,8 +18,9 @@ const[username,setUsername] = useState('');
 //read messages from db
 //onSnapshot : every time the db changing run this code.
 useEffect(() => {
-db.collection('messages').onSnapshot(snapshot =>{
-  setMessages(snapshot.docs.map(doc => doc.data()))
+db.collection('messages').orderBy('timestamp' , 'desc')
+.onSnapshot(snapshot =>{
+  setMessages(snapshot.docs.map(doc => ({id: doc.id , message: doc.data()})))
 })
 },[]) //[] Means: that the useEffect running only when the page loads.
 
@@ -26,32 +31,42 @@ useEffect(()=>{
 const sendMessage = (event) => {
   //all the logic to show message
   event.preventDefault();
+
+  db.collection('messages').add({
+    message: input,
+    username : username,
+    timestamp:  firebase.firestore.FieldValue.serverTimestamp()
+  })
   setMessages([...messages,{username: username , message: input}]);
   setInput('');
 };
   return(
     <div className="App">
-      <h1>Hello Everyone!</h1>
+      
+      <h1>Hello Everyone! </h1>
+      <img height="100" width='100' src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTghc5snLWCRWoUS3cZTJe2Gi3itK9u0bOiAQ&usqp=CAU" ></img>
       <h2>welcome {username}</h2>
-      <form>
 
-        {/* the input filed*/ }
+      <form className="app__form">
+        <FormControl className="app__formControl">
+          
+          <Input placeholder="Enter Message..." className="app__input" value={input} onChange={event=> setInput(event.target.value)} />
+          <IconButton className="app__iconButtom" disabled={!input} variant="contained" color="primary" type='submit' onClick = {sendMessage}>
+            <SendIcon>
 
-        {/* the send button*/ }
-        
-        <FormControl>
-          <InputLabel >Enter Message...</InputLabel>
-          <Input value={input} onChange={event=> setInput(event.target.value)} />
-          <Button disabled={!input} variant="contained" color="primary" type='submit' onClick = {sendMessage}>Send Message</Button>
+            </SendIcon>
+          </IconButton>
         </FormControl>
       </form>
       
-      {/* the messages area*/ }
-      {
-        messages.map(message => (
-          <Message username ={username} message={message}></Message>
-        ))
-      }
+      <FlipMove>
+          {/* the messages area*/ }
+        {
+          messages.map(({id , message}) => (
+            <Message key={id} username ={username} message={message}></Message>
+          ))
+        }
+      </FlipMove>
     </div>
   );
 }
