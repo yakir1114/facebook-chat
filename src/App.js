@@ -43,7 +43,7 @@ const sendMessage = (event) => {
   return(
     <div className="App">
       
-      <h1>קרנדי צאט </h1>
+      <h1>Hello Everyone! </h1>
       <img height="100" width='100' src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTghc5snLWCRWoUS3cZTJe2Gi3itK9u0bOiAQ&usqp=CAU" ></img>
       <h2>welcome {username}</h2>
 
